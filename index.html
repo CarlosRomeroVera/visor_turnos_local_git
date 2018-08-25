@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Visor Turnos</title>         
+        <link rel="stylesheet" type="text/css" href="webroot/css/bts4/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="webroot/css/animate.css">
+        <script type="text/javascript" src="webroot/js/falgun/jquery.js"></script>
+    </head>                                       
+    <body>
+        <style>                            
+            #clock{
+                font-family: sans-serif;
+                font-size:30px;
+                text-shadow:0px 0px 1px #fff;
+                color:black;
+            }
+            #clock span {
+                color:#000000;
+                text-shadow:0px 0px 1px #333;
+                font-size:20px;
+                position:relative;
+                top:-27px;
+                left:-10px;
+            }
+            .loc{
+                background-color:#cdd7d4 ;
+                font-family: sans-serif;
+                font-size:30px;
+                text-shadow:0px 0px 1px #fff;
+                color:black;
+            }
+        </style>
+            
+
+        <div class="card" id="Contenedor">
+            <div class="card-body">
+                <div class="row" id="InformacionTurno">
+                    <div class="col-md-12" style="text-align: center;" id="DivAlert">
+                        <img src="webroot/img/cargando6.gif" alt="..." class="" style="width: 250px; height: 220px;"><br><br>
+                        <h2 id="IdMensaje" style="color: #A91007; font-weight: bold;">BUSCANDO TURNO ACTUAL...</h2>
+                    </div>    
+                </div>
+
+                <div class="row" id="muestraTurno">
+                    <div class="col-md-12" id="nuevo">
+                        <div class="row">
+                            <div class="col-md-9" style="text-align: center;">
+                                <div class="card bg-light mb-3" style="text-align: center;">
+                                  <div class="card-body" style="padding: 0px 0px 0px 0px">
+                                    <h1><b id="nombreCiudadano">Nombre</b></h1>
+                                  </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3" style="text-align: center;">
+                                <div class="card bg-light mb-3" style="text-align: center;">
+                                  <div class="card-body" style="padding: 0px 0px 0px 0px">
+                                    <h1>Turno: <b id="turnoCiudadano"></b></h1>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+
+                    <div class="col-md-12" id="asuntosCiudadano">
+                        <div class="alert alert-danger" role="alert">
+                          SIN ASUNTOS REGISTRADOS
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $('#muestraTurno').hide();
+            window.server = 'https://audiencias.sm2consultores.com/';
+            // window.server = 'http://localhost/audiencias/';
+            evento = '';
+            turno = '';
+
+            $.ajax({
+                type: "GET",
+                url:        window.server + "visor_turnos/obtiene_evento",
+                dataType:   "JSON",
+                async: true,
+                success:    function(data){
+                    // console.log(data.CatEvento.id);
+                    // obj = $.parseJSON(data);
+                    // console.log(data);
+                    evento = data.CatEvento.id;
+                }
+            });//cierre de ajax
+
+            setInterval(function(){ 
+                  $.ajax({
+                    type: "POST",
+                    url:        window.server + "visor_turnos/busca_turno",
+                    dataType:   "json",
+                    async: true,
+                    success:    function(data){
+                      // console.log(turno);
+                      // console.log(data);
+                      if (data != turno) {
+                        // console.log(data);
+                        $.ajax({
+                            type: "POST",
+                            url:        window.server + "visor_turnos/get_informacion_nuevo_local",
+                            data: {
+                                turno: data,
+                                cat_evento_id: evento
+                            },
+                            dataType:   "json",
+                            async: true,
+                            success:    function(dataTurno){
+                                // alert('ok');
+                              // console.log(dataTurno);
+                              nombreCompleto = dataTurno.CatCiudadano.nombre+' '+dataTurno.CatCiudadano.apellido_paterno+' '+dataTurno.CatCiudadano.apellido_materno;
+                              // console.log(nombreCompleto);
+                              
+
+                              html = '';
+                              for (var i = dataTurno.Asuntos.length - 1; i >= 0; i--) {
+                                    // console.log(dataTurno.Asuntos[i]);
+                                    // console.log(dataTurno.Asuntos[i].CatArea[0].AudAsuntosCatArea.cat_estado_id);
+                                    html += '<table class="table table-bordered table-condensed" style="font-size: 20px;">';
+                                    if (dataTurno.Asuntos[i].CatArea[0].AudAsuntosCatArea.cat_estado_id == 3) {
+                                        html += "<tr style='background-color:rgba(34, 100, 44, 0.4);'>";
+                                    }else{
+                                        html += "<tr style='background-color:rgba(255, 166, 0, 0.3);'>";
+                                    }
+
+                                    html += '<th width="45%" style="text-align:center;">ASUNTO</th>';
+                                    html += '<th width="55%" style="text-align:center;">OBSERVACIONES</th>';
+                                    html += '</tr>';
+                                    html += '<tr>';
+                                    html += '<th style="text-align:justify;">'+dataTurno.Asuntos[i].AudAsunto.name+'</th>';
+                                    html += '<td>';
+
+                                    if (dataTurno.Asuntos[i].AudObservacione.length > 0) {
+                                        // console.log(dataTurno.Asuntos[i].AudObservacione);
+                                        // for (var j = dataTurno.Asuntos[i].AudObservacione.length - 1; j >= 0; j--) {
+                                            // console.log(dataTurno.Asuntos[i].AudObservacione[j]);
+                                            html += '<b>'+dataTurno.Asuntos[i].AudObservacione[0].adicional+'</b><br>'+dataTurno.Asuntos[i].AudObservacione[0].name;
+                                        // }
+                                    }else{
+                                        html += '<div class="alert alert-warning text-center" role="alert">';
+                                        html += 'EN SEGUIMIENTO';
+                                        html += '</div>';
+                                    }
+                                    html += '</td>';
+                                    html += '</tr>';
+                                    html += '</table>';
+                              }
+                              // $('#InformacionTurno').show();
+                              // $('#muestraTurno').removeClass('animated slideInRight');
+                              // $('#muestraTurno').hide();
+                              $('#InformacionTurno').hide();
+                              
+                              $('#nombreCiudadano').html(nombreCompleto);
+                              $('#turnoCiudadano').html(dataTurno.AudAudiencia.turno);
+                              $('#asuntosCiudadano').html(html);
+
+                              $('#muestraTurno').show();
+                              $('#muestraTurno').addClass('animated slideInRight');
+
+                              setTimeout(function(){ 
+                                // alert("Hello"); 
+                                $('#muestraTurno').removeClass('animated slideInRight');
+                              }, 3000);
+                              
+                              turno = data;
+                            }
+                        });//cierre de ajax
+                      }
+                    }
+                  });//cierre de ajax
+            }, 300);
+        </script>
+
+        <script type="text/javascript" src="webroot/js/bts4/bootstrap.min.js"></script>
+    </body>
+</html>
