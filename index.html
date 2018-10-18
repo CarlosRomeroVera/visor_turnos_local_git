@@ -49,7 +49,7 @@
                         <div class="row">
                             <div class="col-md-9" style="text-align: center;">
                                 <div class="card bg-light mb-3" style="text-align: center;">
-                                  <div class="card-body" style="padding: 0px 0px 0px 0px">
+                                  <div class="card-body" style="padding: 0px 0px 0px 0px; border-bottom: solid rgb(0,143,190); border-right: solid rgb(0,143,190);">
                                     <h1><b id="nombreCiudadano">Nombre</b></h1>
                                   </div>
                                 </div>
@@ -57,14 +57,21 @@
                             
                             <div class="col-md-3" style="text-align: center;">
                                 <div class="card bg-light mb-3" style="text-align: center;">
-                                  <div class="card-body" style="padding: 0px 0px 0px 0px">
-                                    <h1>Turno: <b id="turnoCiudadano"></b></h1>
+                                  <div class="card-body" style="padding: 0px 0px 0px 0px; background-color: rgb(0,143,190); color: white;">
+                                    <h1 style="font-weight: bold;">TURNO <b id="turnoCiudadano"></b></h1>
                                   </div>
                                 </div>
                             </div>
                         </div>      
                     </div>
-
+                    <div class="col-md-12">
+                        <table style="width: 100%;">
+                            <tr style='background-color:rgb(0,143,190); color:white; font-size: 35px;'>
+                                <th width="45%" style="text-align:center;">ASUNTOS</th>
+                                <th width="55%" style="text-align:center;">OBSERVACIONES</th>
+                            </tr>
+                        </table>
+                    </div>
                     <div class="col-md-12" id="asuntosCiudadano">
                         <div class="alert alert-danger" role="alert">
                           SIN ASUNTOS REGISTRADOS
@@ -126,18 +133,18 @@
                                     // console.log(dataTurno.Asuntos[i]);
                                     // console.log(dataTurno.Asuntos[i].CatArea[0].AudAsuntosCatArea.cat_estado_id);
                                     html += '<table class="table table-bordered table-condensed" style="font-size: 20px;">';
-                                    if (dataTurno.Asuntos[i].CatArea[0].AudAsuntosCatArea.cat_estado_id == 3) {
-                                        html += "<tr style='background-color:rgba(34, 100, 44, 0.4);'>";
-                                    }else{
-                                        html += "<tr style='background-color:rgba(255, 166, 0, 0.3);'>";
-                                    }
-
-                                    html += '<th width="45%" style="text-align:center;">ASUNTO</th>';
-                                    html += '<th width="55%" style="text-align:center;">OBSERVACIONES</th>';
-                                    html += '</tr>';
+                                    // if (dataTurno.Asuntos[i].CatArea[0].AudAsuntosCatArea.cat_estado_id == 3) {
+                                    //     html += "<tr style='background-color:rgba(34, 100, 44, 0.4);'>";
+                                    // }else{
+                                    //     html += "<tr style='background-color:rgba(255, 166, 0, 0.3);'>";
+                                    // }
+                                    // html += "<tr style='background-color:rgb(0,143,190); color:white; font-size: 35px;'>";
+                                    // html += '<th width="45%" style="text-align:center;">ASUNTOS</th>';
+                                    // html += '<th width="55%" style="text-align:center;">OBSERVACIONES</th>';
+                                    // html += '</tr>';
                                     html += '<tr>';
-                                    html += '<th style="text-align:justify;">'+dataTurno.Asuntos[i].AudAsunto.name+'</th>';
-                                    html += '<td>';
+                                    html += '<th width="45%" style="text-align:justify;">'+dataTurno.Asuntos[i].AudAsunto.name+'</th>';
+                                    html += '<td width="45%">';
 
                                     if (dataTurno.Asuntos[i].AudObservacione.length > 0) {
                                         // console.log(dataTurno.Asuntos[i].AudObservacione);
